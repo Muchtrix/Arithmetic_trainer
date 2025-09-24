@@ -1,33 +1,26 @@
 <template>
-  <div :class="[darkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-900', 'flex flex-col min-h-screen']">
-    <div class="mx-auto w-full max-w-[400px] flex flex-col min-h-screen">
-      <TopBar :darkMode="darkMode" @toggleDarkMode="toggleDarkMode" />
-      <div class="flex-1 flex items-center justify-center">
-        <!-- Future navigation for multiple games can go here -->
-        <ArithmeticGame :darkMode="darkMode" />
+  <div :class="mainDarkModeClass">
+    <div :class="['bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-white flex flex-col min-h-screen']">
+      <div class="mx-auto w-full max-w-[400px] flex flex-col min-h-screen">
+        <TopBar />
+        <div class="flex-1 flex items-stretch justify-center mb-4">
+          <router-view />
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
-import ArithmeticGame from "./components/ArithmeticGame.vue";
+import { computed } from 'vue';
 import TopBar from "./components/TopBar.vue";
+import { useDarkModeStore } from "./stores/darkMode";
 
-const darkMode = ref(true);
+import { storeToRefs } from 'pinia';
+const darkModeStore = useDarkModeStore();
+const { darkMode } = storeToRefs(darkModeStore);
 
-onMounted(() => {
-  const savedMode = localStorage.getItem("darkMode");
-  if (savedMode !== null) {
-    darkMode.value = savedMode === "true";
-  }
-});
-
-const toggleDarkMode = () => {
-  darkMode.value = !darkMode.value;
-  localStorage.setItem("darkMode", darkMode.value.toString());
-};
+const mainDarkModeClass = computed(() => (darkMode.value ? 'dark' : ''));
 </script>
 
 <style>

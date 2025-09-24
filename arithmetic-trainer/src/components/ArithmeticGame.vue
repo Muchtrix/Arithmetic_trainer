@@ -1,9 +1,9 @@
 <template>
   <div
-    :class="[darkMode ? 'bg-gray-800' : 'bg-white', 'shadow-lg rounded-2xl p-6 w-full flex flex-col h-full']"
+    class="bg-white dark:bg-gray-800 shadow-lg rounded-2xl p-6 w-full flex flex-col flex-grow basis-full items-stretch"
   >
-    <div class="flex-grow flex flex-col">
-      <div v-if="currentProblem" class="text-3xl font-mono mb-6 text-center flex-1">
+    <div class="flex-grow flex flex-col basis-full place-self-stretch">
+      <div v-if="currentProblem" class="text-3xl font-mono mb-6 text-center basis-full place-self-stretch">
         {{ currentProblem.a }} {{ currentProblem.op }} {{ currentProblem.b }} = {{ userInput || '?' }}
       </div>
       <div class="grid grid-cols-3 gap-4 mb-4 flex-grow-0">
@@ -25,8 +25,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue';
-const props = defineProps<{ darkMode: boolean }>();
+import { ref, computed, onMounted } from 'vue';
+import { useDarkModeStore } from '../stores/darkMode';
+import { storeToRefs } from 'pinia';
+const darkModeStore = useDarkModeStore();
+const { darkMode } = storeToRefs(darkModeStore);
 
 type Problem = { a: number; b: number; op: string; answer: number };
 
@@ -38,9 +41,7 @@ onMounted(() => {
   newProblem();
 });
 
-watch(() => props.darkMode, () => {
-  // react to darkMode changes if needed
-});
+
 
 const generateProblem = (): Problem => {
   const ops = ['+', '-', '*', '/'];
@@ -93,45 +94,23 @@ const feedbackClass = computed(() =>
   feedback.value.startsWith('Correct') ? 'text-green-400' : 'text-red-400'
 );
 
-const buttonClass = computed(() =>
-  ['btn', props.darkMode ? 'bg-gray-700 text-white' : 'bg-gray-200 text-gray-900']
-);
 
-const acceptButtonClass = computed(() =>
-  ['btn', props.darkMode ? 'bg-green-600 text-white' : 'bg-green-300 text-gray-900']
-);
+const buttonClass = 'base-button';
+const acceptButtonClass = 'accept-button';
+const eraseButtonClass = 'warning-button';
 
-const eraseButtonClass = computed(() =>
-  ['btn', props.darkMode ? 'bg-amber-500 text-white' : 'bg-amber-300 text-gray-900']
-);
-
-const buttons = computed(() => [
-  { symbol: '1', class: buttonClass.value, handler: () => appendInput(1) },
-  { symbol: '2', class: buttonClass.value, handler: () => appendInput(2) },
-  { symbol: '3', class: buttonClass.value, handler: () => appendInput(3) },
-  { symbol: '4', class: buttonClass.value, handler: () => appendInput(4) },
-  { symbol: '5', class: buttonClass.value, handler: () => appendInput(5) },
-  { symbol: '6', class: buttonClass.value, handler: () => appendInput(6) },
-  { symbol: '7', class: buttonClass.value, handler: () => appendInput(7) },
-  { symbol: '8', class: buttonClass.value, handler: () => appendInput(8) },
-  { symbol: '9', class: buttonClass.value, handler: () => appendInput(9) },
-  { symbol: 'erase', class: eraseButtonClass.value, faClass: 'fa-solid fa-delete-left', handler: () => erase() },
-  { symbol: '0', class: buttonClass.value, handler: () => appendInput(0) },
-  { symbol: 'submit', class: acceptButtonClass.value, faClass: 'fa-solid fa-check', handler: () => submit() },
-]);
+const buttons = [
+  { symbol: '1', class: buttonClass, handler: () => appendInput(1) },
+  { symbol: '2', class: buttonClass, handler: () => appendInput(2) },
+  { symbol: '3', class: buttonClass, handler: () => appendInput(3) },
+  { symbol: '4', class: buttonClass, handler: () => appendInput(4) },
+  { symbol: '5', class: buttonClass, handler: () => appendInput(5) },
+  { symbol: '6', class: buttonClass, handler: () => appendInput(6) },
+  { symbol: '7', class: buttonClass, handler: () => appendInput(7) },
+  { symbol: '8', class: buttonClass, handler: () => appendInput(8) },
+  { symbol: '9', class: buttonClass, handler: () => appendInput(9) },
+  { symbol: 'erase', class: eraseButtonClass, faClass: 'fa-solid fa-delete-left', handler: () => erase() },
+  { symbol: '0', class: buttonClass, handler: () => appendInput(0) },
+  { symbol: 'submit', class: acceptButtonClass, faClass: 'fa-solid fa-check', handler: () => submit() },
+];
 </script>
-
-<style scoped>
-.btn {
-  font-size: 1.25rem;
-  font-weight: bold;
-  padding-top: 1rem;
-  padding-bottom: 1rem;
-  border-radius: 0.75rem;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-  transition: color 0.2s, background 0.2s, transform 0.1s;
-}
-.btn:active {
-  transform: scale(0.95);
-}
-</style>

@@ -1,1 +1,15 @@
 @import "tailwindcss";
+
+@layer components {
+    .base-button {
+        @apply text-xl font-bold py-4 rounded-xl shadow-md transition active:scale-95 bg-gray-200 text-gray-900 dark:bg-gray-700 dark:text-white;
+    }
+    .accept-button {
+        @apply text-xl font-bold py-4 rounded-xl shadow-md transition active:scale-95 bg-green-300 text-gray-900 dark:bg-green-600 dark:text-white;
+    }
+    .warning-button {
+        @apply text-xl font-bold py-4 rounded-xl shadow-md transition active:scale-95 bg-amber-300 text-gray-900 dark:bg-amber-500 dark:text-white;
+    }
+}
+
+@custom-variant dark (&:where(.dark, .dark *));
