@@ -10,5 +10,5 @@ app.use(router)
 app.mount('#app')
 
 if ( "serviceWorker" in navigator ) {
-     navigator.serviceWorker.register( "/serviceworker.js" );
+     navigator.serviceWorker.register(import.meta.env.BASE_URL + 'service-worker.js')
 }
