@@ -3,14 +3,20 @@
     class="bg-white dark:bg-gray-800 shadow-lg rounded-2xl p-6 w-full flex flex-col flex-grow basis-full"
   >
     <div class="flex-grow flex flex-col basis-full">
-      <div class="basis-full flex-grow-1 flex flex-col justify-end">
-        <div v-for="(p, index) in problemHistory" :key="index" :class="['text-lg font-mono mb-1 text-center', p.color]">
-          {{ p.a }} {{ p.op }} {{ p.b }} = {{ p.userAnswer }} <span v-if="p.correct">✓</span><span v-else>✗ ({{ p.answer }})</span>
+      <transition-group 
+        tag="div"
+        name="recent-list"
+        class="basis-full flex-grow-1 flex flex-col justify-end">
+        <div v-for="p in recentProblems" :key="p.id" :class="['text-lg font-mono mb-1 text-center', p.color]">
+          {{ p.a }} {{ p.op }} {{ p.b }} = {{ p.userAnswer }}
+        </div>
+      </transition-group>
+      <div class="text-4xl font-mono mb-6 text-center flex-grow-1 flex-shrink-0 basis-l">
+        <div v-if="currentProblem">
+          {{ currentProblem.a }} {{ currentProblem.op }} {{ currentProblem.b }} = {{ userInput || '?' }}
         </div>
       </div>
-      <div v-if="currentProblem" class="text-4xl font-mono mb-6 text-center flex-grow-0">
-        {{ currentProblem.a }} {{ currentProblem.op }} {{ currentProblem.b }} = {{ userInput || '?' }}
-      </div>
+      
       <div class="grid grid-cols-3 gap-4 flex-grow-0">
         <button
           v-for="b in buttons"
@@ -27,20 +33,24 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
 
-type Problem = { a: number; b: number; op: string; answer: number };
+type Problem = { a: number; b: number; op: string; answer: number, id: number };
 type SolvedProblem = Problem & { userAnswer: number; correct: boolean, color: string };
 
 const userInput = ref('');
+let problemIdCounter = 0;
 const currentProblem = ref<Problem | null>(null);
 const problemHistory = ref<SolvedProblem[]>([]);
+
+const maxRecentProblems = 3;
+const recentProblems = ref<SolvedProblem[]>([]);
 
 onMounted(() => {
   newProblem();
 });
 
-const generateProblem = (): Problem => {
+const generateProblem = (id: number): Problem => {
   const ops = ['+', '-', '*', '/'];
   const op = ops[Math.floor(Math.random() * ops.length)];
   let a = Math.floor(Math.random() * 20) + 1;
@@ -58,11 +68,12 @@ const generateProblem = (): Problem => {
     case '/': answer = a / b; break;
     default: answer = 0;
   }
-  return { a, b, op, answer };
+  return { a, b, op, answer, id };
 };
 
 const newProblem = () => {
-  currentProblem.value = generateProblem();
+  problemIdCounter += 1;
+  currentProblem.value = generateProblem(problemIdCounter);
   userInput.value = '';
 };
 
@@ -76,9 +87,15 @@ const erase = () => {
 
 const submit = () => {
   if (!currentProblem.value || userInput.value === '') return;
-  problemHistory.value.push(createSolvedProblem(currentProblem.value, parseInt(userInput.value, 10)));
-  console.log(problemHistory.value);
-  newProblem();
+  const solved = createSolvedProblem(currentProblem.value, parseInt(userInput.value, 10));
+  problemHistory.value.push(solved);
+
+  if (recentProblems.value.length >= maxRecentProblems) {
+    recentProblems.value.shift();
+  }
+  recentProblems.value.push(solved);
+  currentProblem.value = null;
+  setTimeout(() => newProblem(), 500);
 };
 
 const createSolvedProblem = (problem: Problem, userAnswer: number): SolvedProblem => {
@@ -111,3 +128,6 @@ const buttons = [
   { symbol: 'submit', class: acceptButtonClass, faClass: 'fa-solid fa-check', handler: () => submit() },
 ];
 </script>
+<style scoped>
+@import './style.css';
+</style>

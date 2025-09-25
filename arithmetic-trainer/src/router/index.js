@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import ArithmeticGame from '../components/ArithmeticGame.vue';
+import ArithmeticGame from '../components/arithmetic/ArithmeticGame.vue';
 // Add more games here as you create them
 
 const routes = [

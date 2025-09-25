@@ -1,0 +1,17 @@
+@import "tailwindcss";
+.recent-list-move, /* apply transition to moving elements */
+.recent-list-enter-active,
+.recent-list-leave-active {
+  transition: all 0.5s ease;
+}
+
+.recent-list-enter-from {
+  opacity: 0;
+  transform: translateY(30px) scale(2);
+  @apply text-gray-900 dark:text-white;
+}
+
+.recent-list-leave-to {
+  opacity: 0;
+  transform: translateY(-30px);
+}
