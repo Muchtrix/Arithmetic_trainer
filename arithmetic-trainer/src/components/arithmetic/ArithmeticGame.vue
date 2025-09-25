@@ -12,9 +12,11 @@
         </div>
       </transition-group>
       <div class="text-4xl font-mono mb-6 text-center flex-grow-1 flex-shrink-0 basis-l">
-        <div v-if="currentProblem">
-          {{ currentProblem.a }} {{ currentProblem.op }} {{ currentProblem.b }} = {{ userInput || '?' }}
-        </div>
+        <transition name="current-problem">
+          <div v-if="currentProblem">
+            {{ currentProblem.a }} {{ currentProblem.op }} {{ currentProblem.b }} = {{ userInput || '?' }}
+          </div>
+        </transition>
       </div>
       
       <div class="grid grid-cols-3 gap-4 flex-grow-0">
@@ -33,7 +35,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, nextTick } from 'vue';
 
 type Problem = { a: number; b: number; op: string; answer: number, id: number };
 type SolvedProblem = Problem & { userAnswer: number; correct: boolean, color: string };
@@ -95,7 +97,9 @@ const submit = () => {
   }
   recentProblems.value.push(solved);
   currentProblem.value = null;
-  setTimeout(() => newProblem(), 500);
+  nextTick().then(() => {
+    newProblem();
+  });
 };
 
 const createSolvedProblem = (problem: Problem, userAnswer: number): SolvedProblem => {
@@ -129,5 +133,5 @@ const buttons = [
 ];
 </script>
 <style scoped>
-@import './style.css';
+@import './style.scss';
 </style>

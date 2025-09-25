@@ -1,0 +1,29 @@
+@import "../../style.scss";
+
+@layer base, components, utilities, animations;
+
+@layer animations {
+  .recent-list-move, /* apply transition to moving elements */
+  .recent-list-enter-active,
+  .recent-list-leave-active {
+    transition: all 1s ease;
+  }
+  
+  .recent-list-enter-from {
+    transform: translateY(30px) scale(2);
+  }
+  
+  .recent-list-leave-to {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+
+  .current-problem-enter-active{
+    transition: all 1s ease;
+  }
+
+  .current-problem-enter-from {
+    opacity: 0;
+    transform: translateY(30px)
+  }
+}

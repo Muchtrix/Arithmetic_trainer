@@ -1,0 +1,30 @@
+@import "tailwindcss";
+
+@layer base {
+    .base-text-color {
+        @apply text-gray-900 dark:text-white;
+    }
+}
+
+@layer components {
+    .base-button {
+        @apply text-xl font-bold py-4 rounded-xl shadow-md transition-colors active:scale-95 bg-gray-200 dark:bg-gray-700;
+        @extend .base-text-color;
+    }
+    .accept-button {
+        @apply bg-green-300 text-gray-900 dark:bg-green-600 dark:text-white;
+        @extend .base-button;
+        &:hover {
+            @apply bg-green-400;
+        }
+    }
+    .warning-button {
+        @apply bg-amber-300 text-gray-900 dark:bg-amber-500 dark:text-white;
+        @extend .base-button;
+        &:hover {
+            @apply bg-amber-400;
+        }
+    }
+}
+
+@custom-variant dark (&:where(.dark, .dark *));
